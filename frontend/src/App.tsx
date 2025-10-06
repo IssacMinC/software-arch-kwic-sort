@@ -1,14 +1,24 @@
 import './App.css'
+import { useState } from 'react'
 
 function App() {
+
+  const [sentence, setSentence] = useState('')
+
+  const search = document.getElementById("search") as HTMLInputElement;
+
+  function onStore() {
+    setSentence(search.value)
+  }
+
   return (
     <div className="container">
-      <input type="text" className="search" placeholder='Input a Sentence to Store'/>
+      <input type="text" id="search" className="search" placeholder='Input a Sentence to Store'/>
       <div className="btn-container">
         <button className="clear-btn">
           Clear
         </button>
-        <button className="search-btn">
+        <button className="store-btn" onClick={onStore}>
           Store
         </button>
       </div>
@@ -16,6 +26,7 @@ function App() {
         <div className='section parser'>
           Line to Store
           <hr/>
+          {sentence}
         </div>
         <div className='section shifter'>
           Circular Shifts
