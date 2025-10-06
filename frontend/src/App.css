@@ -1,0 +1,58 @@
+.container{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  height: 800px;
+}
+
+button{
+  border-radius:5px;
+  height: 35px;
+  width: 150px;
+}
+
+hr{
+    width:33%;
+}
+
+.search{
+  width:40%;
+  text-align: center;
+  height: 40px;
+  border-radius: 20px;
+  border-color:black;
+}
+
+.btn-container{
+  display:flex;
+  gap: 30px;
+  padding-top:15px;
+}
+
+.search-btn{
+    background-color:rgb(99, 99, 245);
+    color:white;
+}
+.clear-btn{
+    background-color:rgb(255, 255, 255);
+}
+
+.output{
+    display:flex;
+    width:100%;
+    padding-top: 100px;
+    justify-content: space-around;
+}
+
+.section{
+    width:25%;
+    text-align:center
+}
+.shifter{
+    border-left:1px solid black;
+    border-right:1px solid black; 
+}
+.alphabetizer{
+    border-right:1px solid black; 
+}
