@@ -79,19 +79,16 @@ testTitle = 0
 @app.route('/store', methods=['POST'])
 def store():
     data = request.json
-    line = data["line"]
+    url = data["url"]
+    desc = data["desc"]
 
     global testTitle
     title = testTitle
     testTitle += 1
 
-    splitLine = line.split()
-    url = splitLine[0]
-    description = " ".join(splitLine[1:])
+    urlID = db.insert_website(title, url, desc)
 
-    urlID = db.insert_website(title, url, description)
-
-    p.parse(description)
+    p.parse(desc)
     s.shift(p.getInput())
     a.sort(s.getShifts())
     
@@ -105,17 +102,6 @@ def store():
       "store": [f"{urlID}: {url}"]
     }
 
-    # line = data['line']
-    # p.parse(line)
-    # s.shift(p.getInput())
-    # a.sort(s.getShifts())
-    # l.add(a.getAlpha())
-
-    # return {
-    #   "shifts": s.getShifts(),
-    #   "alphas": a.getAlpha(),
-    #   "store": l.getData()
-    # }
 
 if __name__ == '__main__':
     app.run(debug=True)

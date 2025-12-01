@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 class MongoHandler:
-    def __init__(self, uri="mongodb+srv://DBUser:DBPassword@cyberminer.syv0qil.mongodb.net/", db_name="Cyberminer"):
+    def __init__(self, uri="", db_name=""):
         self.client = MongoClient(uri)
         self.db = self.client[db_name]
         self.websites = self.db["Websites"]
