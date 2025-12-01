@@ -16,7 +16,6 @@ class Parser:
   def clean(self, s) :
     tmp = []
     for w in s:
-      w = w.lower()
       tmp.append(w)
     return tmp
 
@@ -52,7 +51,7 @@ class Alphabetizer:
     self.alphabetized = []
 
   def sort(self, s):
-    self.alphabetized = sorted(s)
+    self.alphabetized = sorted(s, key=str.lower)
     return self.alphabetized
 
   def getAlpha(self):
@@ -97,8 +96,8 @@ def store():
       db.insert_kwic_entry(urlID, line, first_word)
 
     return {
-      "shifts": list(a.getAlpha()),
-      "alphas": [f"Created {len(a.getAlpha())} KWIC entries"],
+      "shifts": list(s.getShifts()),
+      "alphas": a.getAlpha(),
       "store": [f"{urlID}: {url}"]
     }
 

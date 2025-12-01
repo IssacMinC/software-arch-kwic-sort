@@ -25,7 +25,7 @@ function Store() {
         headers: {
             'Content-Type': 'application/json' 
         },
-            body: JSON.stringify({line: desc}) 
+            body: JSON.stringify({url: url, desc: desc}) 
         })
         .then(response => {
             const data = response.json(); 
