@@ -1,8 +1,12 @@
 from flask import Flask, request
 from flask_cors import CORS
+from db.mongo import MongoHandler
 
 app = Flask(__name__)
 CORS(app)
+
+db = MongoHandler()
+print(db.websites.count_documents({}))
 
 class Parser:
   def __init__(self):
@@ -70,20 +74,34 @@ p = Parser()
 s = Shifter()
 a = Alphabetizer()
 
+testTitle = 0
+
 @app.route('/store', methods=['POST'])
 def store():
     data = request.json
-    line = data['line']
-    p.parse(line)
+    url = data["url"]
+    desc = data["desc"]
+
+    global testTitle
+    title = testTitle
+    testTitle += 1
+
+    urlID = db.insert_website(title, url, desc)
+
+    p.parse(desc)
     s.shift(p.getInput())
     a.sort(s.getShifts())
-    l.add(a.getAlpha())
+    
+    for line in a.getAlpha():
+      first_word = line.split()[0]
+      db.insert_kwic_entry(urlID, line, first_word)
 
     return {
-      "shifts": s.getShifts(),
-      "alphas": a.getAlpha(),
-      "store": l.getData()
+      "shifts": list(a.getAlpha()),
+      "alphas": [f"Created {len(a.getAlpha())} KWIC entries"],
+      "store": [f"{urlID}: {url}"]
     }
+
 
 if __name__ == '__main__':
     app.run(debug=True)
