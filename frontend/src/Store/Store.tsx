@@ -7,18 +7,19 @@ function Store() {
 
     const [desc, setDesc] = useState('')
     const [url, setUrl] = useState('')
-    const [storeSent, setStoreSent] = useState('')
+    const [storeSent, setStoreSent] = useState([''])
     const [shifts, setShifts] = useState([])
     const [alphas, setAlphas] = useState([])
-    const [store, setStore] = useState([])
     const [urlError, setUrlError] = useState('');
 
     async function onStore() {
         if (!URL_REGEX.test(url)) {
-            setUrlError("Invalid URL format. Must be 'http://identifier.identifier.tld' where tld is .edu, .com, .org, or .net.");
+            setUrlError("Invalid URL format.");
             return; 
         }
-        setStoreSent(desc)
+        setUrlError("");
+        setStoreSent([url, desc])
+
         fetch('http://127.0.0.1:5000/store', {
         method: 'POST', 
         headers: {
@@ -30,7 +31,6 @@ function Store() {
             const data = response.json(); 
             return data
         }).then((data) => {
-            console.log(data)
             setData(data)
         }
         )
@@ -38,17 +38,16 @@ function Store() {
 
     function onClear(){
         setDesc('')
-        setStoreSent('')
+        setUrl('')
+        setStoreSent([''])
         setShifts([])
         setAlphas([])
-        setStore([])
     }
 
     function setData(data:any){
         setShifts(data.shifts)
         setAlphas(data.alphas)
-            setStore(data.store)
-        }
+    }
 
     return (
         <div className="container">
@@ -68,9 +67,10 @@ function Store() {
                     value={desc} 
                     onChange={(e) => {setDesc(e.target.value)}} 
                     placeholder='Input a Description'
+                    autoCorrect="on"
                 />
             </div>
-                            {urlError && <p className="error-message" style={{ color: 'red' }}>{urlError}</p>}
+            {urlError && <p className="error-message" style={{ color: 'red' }}>{urlError}</p>}
 
 
             <div className="btn-container">
@@ -83,42 +83,41 @@ function Store() {
             </div>
             <div className="output">
                 <div className='section parser'>
-                Line to Store
-                <hr/>
-                {storeSent}
+                    <h2>
+                        Pair to Store
+                    </h2>
+                    <hr/>
+                    <div className='pair'>
+                        <a href={storeSent[0]}>{storeSent[0]}</a>
+                        <div>{storeSent[1]}</div>
+                    </div>
+                    
                 </div>
                 <div className='section shifter'>
-                Circular Shifts
-                <hr/>
-                <ul className="map">
-                    {
-                    shifts.map((s) => {
-                        return <li>{s}</li>
-                    })
-                    }
-                </ul>
+                    <h2>
+                        Circular Shifts
+                    </h2>
+                    <hr/>
+                    <ul className="map">
+                        {
+                        shifts.map((s) => {
+                            return <li>{s}</li>
+                        })
+                        }
+                    </ul>
                 </div>
                 <div className='section alphabetizer'>
-                Alphabetized Lines
-                <hr/>
-                <ul className="map">
-                    {
-                    alphas.map((s) => {
-                        return <li>{s}</li>
-                    })
-                    }
-                </ul>
-                </div>
-                <div className='section database'>
-                Database
-                <hr/>
-                <ul className="map">
-                    {
-                    store.map((s) => {
-                        return <li>{s}</li>
-                    })
-                    }
-                </ul>
+                    <h2>
+                        Alphabetized Lines
+                    </h2>
+                    <hr/>
+                    <ul className="map">
+                        {
+                        alphas.map((s) => {
+                            return <li>{s}</li>
+                        })
+                        }
+                    </ul>
                 </div>
             </div>
         </div>

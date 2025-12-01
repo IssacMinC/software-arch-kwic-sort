@@ -56,24 +56,32 @@ hr{
     width:100%;
     padding-top: 100px;
     justify-content: space-around;
-    font-weight: 600;
-    font-size: 18px;
-    margin-bottom: 0px; 
+
 }
 
 .section{
     width:25%;
     text-align:center
 }
+
 .shifter{
     border-left:1px solid black;
-    border-right:1px solid black; 
-}
-.alphabetizer{
     border-right:1px solid black; 
 }
 
 .map{
   list-style-type: none;
   padding-left:0;
+}
+
+.pair{
+
+  column-gap: 30px;
+  width:100%;
+}
+
+h2{
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 0px; 
 }
