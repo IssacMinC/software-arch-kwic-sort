@@ -7,34 +7,29 @@ class MongoHandler:
         self.websites = self.db["Websites"]
         self.kwic = self.db["KWIC"]
 
-    def get_next_url_id(self):
-        return self.websites.count_documents({})
-    
+
     def insert_website(self, title, url, description, visited=0, payment=0):
-        urlID = self.get_next_url_id()
-        
         doc = {
             "title": title,
             "url": url,
-            "urlID": urlID,
             "description": description,
             "visited": visited,
             "payment": payment,
         }
         result = self.websites.insert_one(doc)
-        return urlID
+        return url
 
-    def insert_kwic_entry(self, urlID, kwicDescription, firstWord):
+    def insert_kwic_entry(self, url, kwicDescription, firstWord):
         doc = {
-            "urlID": urlID,
+            "url": url,
             "kwicDescription": kwicDescription,
             "firstWord": firstWord
         }
         return self.kwic.insert_one(doc)
     
-    def delete_entry(self, urlID):
-        self.websites.delete_one({"urlID" : urlID})
-        self.kwic.delete_many({"urlID" : urlID})
+    def delete_entry(self, url):
+        self.websites.delete_one({"url" : url})
+        self.kwic.delete_many({"url" : url})
 
     def search_website(self, searchType, resultsOrder, keywords):
         keywords = keywords.split()

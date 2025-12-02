@@ -94,7 +94,7 @@ def store():
     
     for line in a.getAlpha():
       first_word = line.split()[0]
-      db.insert_kwic_entry(urlID, line, first_word)
+      db.insert_kwic_entry(url, line, first_word)
 
     return {
       "shifts": list(s.getShifts()),
@@ -102,6 +102,17 @@ def store():
       "store": [f"{urlID}: {url}"]
     }
 
+@app.route('/delete', methods=['POST'])
+def delete():
+  data = request.json
+  url = data["url"]
+  try:
+    db.delete_entry(url)
+  except Exception as e:
+    return e
+  return { 'status':'success' }
+
+  
 @app.route('/search/<searchType>/<resultsOrder>/<desc>', methods=['POST'])
 def search(desc, searchType="or", resultsOrder="alphabetical"):
   results = db.search_website(searchType, resultsOrder, desc)
