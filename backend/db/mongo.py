@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 class MongoHandler:
-    def __init__(self, uri="", db_name=""):
+    def __init__(self, uri="mongodb+srv://CyberminerUser:KWIC@cyberminer.syv0qil.mongodb.net/", db_name="Cyberminer"):
         self.client = MongoClient(uri)
         self.db = self.client[db_name]
         self.websites = self.db["Websites"]
@@ -36,11 +36,21 @@ class MongoHandler:
         self.websites.delete_one({"urlID" : urlID})
         self.kwic.delete_many({"urlID" : urlID})
 
-    def get_website(self, urlID):
-        return self.websites.find_one({"urlID": urlID})
+    def search_website(self, searchType, resultsOrder, keywords):
+        query = {}
+        if searchType == "or":
+            query["description"] = {"$regex": "|".join(keywords), "$options": "i"}
+        elif searchType == "and":
+            query["description"] = {"$all": [ {"$regex": k, "$options": "i"} for k in keywords ]}
+        elif searchType == "not":
+            query["description"] = {"$not": {"$regex": "|".join(keywords), "$options": "i"}}
 
-    def get_kwic_by_word(self, word):
-        return self.kwic.find({"firstWord": word})
-    
-    def get_next_url_id(self):
-        return 0
+        results = list(self.websites.find(query))
+        if resultsOrder == "alphabetical":
+            results.sort(key=lambda x: x.get("title", "").lower())
+        elif resultsOrder == "frequency":
+            results.sort(key=lambda x: x.get("visited", 0), reverse=True)
+        elif resultsOrder == "payment":
+            results.sort(key=lambda x: x.get("payment", 0), reverse=True)
+
+        return results

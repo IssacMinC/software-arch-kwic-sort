@@ -101,6 +101,13 @@ def store():
       "store": [f"{urlID}: {url}"]
     }
 
+@app.route('/search/<searchType>/<resultsOrder>/<desc>', methods=['POST'])
+def search(desc, searchType="or", resultsOrder="alphabetical"):
+  results = db.search_website(searchType, resultsOrder, desc)
+
+  return{
+    
+  }
 
 if __name__ == '__main__':
     app.run(debug=True)
