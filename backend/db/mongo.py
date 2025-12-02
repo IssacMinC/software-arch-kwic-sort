@@ -31,12 +31,25 @@ class MongoHandler:
         self.websites.delete_one({"url" : url})
         self.kwic.delete_many({"url" : url})
 
-    def get_website(self, urlID):
-        return self.websites.find_one({"urlID": urlID})
+    def search_website(self, searchType, resultsOrder, keywords):
+        keywords = keywords.split()
+        query = {}
+        if searchType == "or":
+            query["description"] = {"$regex": "|".join(keywords)}
+        elif searchType == "and":
+            query["$and"] = [{"description": {"$regex": k}} for k in keywords]
+        elif searchType == "not":
+            query["description"] = {"$not": {"$regex": "|".join(keywords)}}
 
-    def get_kwic_by_word(self, word):
-        return self.kwic.find({"firstWord": word})
-    
-    def get_next_url_id(self):
-        return 0
-    
+        results = list(self.websites.find(query))
+        for r in results:
+            r["_id"] = str(r["_id"])
+
+        if resultsOrder == "alphabetical":
+            results.sort(key=lambda x: str(x.get("title", "")).lower())
+        elif resultsOrder == "frequency":
+            results.sort(key=lambda x: x.get("visited", 0), reverse=True)
+        elif resultsOrder == "payment":
+            results.sort(key=lambda x: x.get("payment", 0), reverse=True)
+
+        return results

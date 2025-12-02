@@ -36,17 +36,21 @@ hr{
     border-radius: 0px 10px 10px 0px;
 }
 
-.btn-container{
+.select-menu{
+  height: 35px
+}
+
+.btn-container, .select-container{
   display:flex;
   gap: 30px;
   padding-top:15px;
 }
 
-.store-btn{
+.search-btn{
     background-color:rgb(99, 99, 245);
     color:white;
 }
-.clear-btn{
+.clear-btn, .select-menu{
     background-color:rgb(255, 255, 255);
 }
 
