@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 from db.mongo import MongoHandler
+from flask import jsonify
 
 app = Flask(__name__)
 CORS(app)
@@ -104,10 +105,7 @@ def store():
 @app.route('/search/<searchType>/<resultsOrder>/<desc>', methods=['POST'])
 def search(desc, searchType="or", resultsOrder="alphabetical"):
   results = db.search_website(searchType, resultsOrder, desc)
-
-  return{
-    
-  }
+  return jsonify({"results": results})
 
 if __name__ == '__main__':
     app.run(debug=True)

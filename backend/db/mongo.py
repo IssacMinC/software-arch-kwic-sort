@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 class MongoHandler:
-    def __init__(self, uri="mongodb+srv://CyberminerUser:KWIC@cyberminer.syv0qil.mongodb.net/", db_name="Cyberminer"):
+    def __init__(self, uri="", db_name=""):
         self.client = MongoClient(uri)
         self.db = self.client[db_name]
         self.websites = self.db["Websites"]
@@ -37,17 +37,21 @@ class MongoHandler:
         self.kwic.delete_many({"urlID" : urlID})
 
     def search_website(self, searchType, resultsOrder, keywords):
+        keywords = keywords.split()
         query = {}
         if searchType == "or":
-            query["description"] = {"$regex": "|".join(keywords), "$options": "i"}
+            query["description"] = {"$regex": "|".join(keywords)}
         elif searchType == "and":
-            query["description"] = {"$all": [ {"$regex": k, "$options": "i"} for k in keywords ]}
+            query["$and"] = [{"description": {"$regex": k}} for k in keywords]
         elif searchType == "not":
-            query["description"] = {"$not": {"$regex": "|".join(keywords), "$options": "i"}}
+            query["description"] = {"$not": {"$regex": "|".join(keywords)}}
 
         results = list(self.websites.find(query))
+        for r in results:
+            r["_id"] = str(r["_id"])
+
         if resultsOrder == "alphabetical":
-            results.sort(key=lambda x: x.get("title", "").lower())
+            results.sort(key=lambda x: str(x.get("title", "")).lower())
         elif resultsOrder == "frequency":
             results.sort(key=lambda x: x.get("visited", 0), reverse=True)
         elif resultsOrder == "payment":

@@ -4,31 +4,30 @@ import './Search.css'
 
 function Search() {
     const [desc, setDesc] = useState('')
-    const [results, setResults] = useState(['a', 'b', 'c'])
+    const [results, setResults] = useState<{ title: string, description: string, url: string }[]>([])
     const [lenError, setLenError] = useState('');
-    const [resultsOrder, setResultsOrder] = useState('');
-    const [searchType, setSearchType] = useState('');
+    const [resultsOrder, setResultsOrder] = useState('alphabetical');
+    const [searchType, setSearchType] = useState('or');
 
     async function onSearch() {
+        setResults([])
         if(desc.trim().length == 0){
             setLenError("Search string can not be empty");
             return;
         }
         setLenError("");
 
-        fetch('http://127.0.0.1:5000/search/<desc>/<searchType>/<resultsOrder>', {
+        fetch(`http://127.0.0.1:5000/search/${searchType}/${resultsOrder}/${encodeURIComponent(desc)}`, {
         method: 'POST', 
         headers: {
             'Content-Type': 'application/json' 
         },
             body: JSON.stringify({line: desc}) 
         })
-        .then(response => {
-            const data = response.json(); 
-            return data
-        }).then((data) => {
+        .then(response => response.json())
+        .then((data) => {
             console.log(data)
-            setResults(data)
+            setResults(data.results)
         }
         )
     }
@@ -75,9 +74,11 @@ function Search() {
                 </p>
                 <hr className="res-hr"/>
                 {results.map((item, index) => (
-                    <p key={index}>
-                        {item}
-                    </p>
+                        <div key={index} className="result-item">
+                        {item.title}<br />
+                        <a href={item.url} target="_blank">{item.url}</a><br />
+                        {item.description}
+                    </div>
                     
                 ))}
             </div>
